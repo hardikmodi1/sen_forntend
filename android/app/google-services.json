@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "920752533410",
+    "firebase_url": "https://senproject-8568f.firebaseio.com",
+    "project_id": "senproject-8568f",
+    "storage_bucket": "senproject-8568f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920752533410:android:e05b7955dad79586",
+        "android_client_info": {
+          "package_name": "com.example.flock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "920752533410-u21q52bbslu8a5iskj361ks9d3s72m0u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlk_b4GGkjrn_9MACYTm87JXSr4e1PnF0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
