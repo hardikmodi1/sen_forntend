@@ -1,10 +1,11 @@
+import 'dart:async';
+
 import 'package:flock/graphql/groups/query/fetchGroup.dart';
 import 'package:flock/screens/chatScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:location/location.dart' as loc;
-import 'dart:async';
-import 'package:flutter/services.dart';
 
 class GroupChat extends StatefulWidget {
   final String id, text;
@@ -96,7 +97,12 @@ class _GroupChatState extends State<GroupChat> {
                   return Text("Some error fetching data");
                 }
                 if (data != null && data['fetchGroup'].length == 0) {
-                  return Text("No active group in your area!");
+                  return Center(
+                    child: Text(
+                      "You have not joined any group in this location!",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  );
                 }
                 print(data.length);
                 data1 = data['fetchGroup'];

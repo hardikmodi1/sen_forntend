@@ -1,11 +1,11 @@
-import 'package:flock/screens/chatScreen.dart';
-import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:location/location.dart' as loc;
 import 'dart:async';
-import 'package:flutter/services.dart';
 
 import 'package:flock/graphql/user/query/allUser.dart';
+import 'package:flock/screens/chatScreen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:location/location.dart' as loc;
 
 class PersonalChat extends StatefulWidget {
   final String id, text;
@@ -109,6 +109,14 @@ class _PersonalChatState extends State<PersonalChat> {
                       .contains(widget.text.toLowerCase()))
                   .toList();
               data1 = temp;
+            }
+            if (data1 != null && data1.length == 0) {
+              return Center(
+                child: Text(
+                  "No active user in this location!",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              );
             }
             return ListView.builder(
               itemCount: data1.length,

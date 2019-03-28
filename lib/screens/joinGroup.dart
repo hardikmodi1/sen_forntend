@@ -1,10 +1,11 @@
-import 'package:flock/home/home.dart';
+import 'package:flock/screens/chatScreen.dart';
+import 'package:flock/screens/commonRating.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../graphql/groups/query/groupDetailsQuery.dart' as query;
 import '../graphql/groups/mutation/addToGroup.dart' as mutation;
+import '../graphql/groups/query/groupDetailsQuery.dart' as query;
 
 class JoinGroup extends StatefulWidget {
   final String groupId, id;
@@ -13,6 +14,7 @@ class JoinGroup extends StatefulWidget {
 }
 
 class _JoinGroupState extends State<JoinGroup> {
+  String name, iconlink;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +29,8 @@ class _JoinGroupState extends State<JoinGroup> {
         if (error != null) {
           return Text("Error in fetching data");
         }
+        name = data['groupDetail']['name'];
+        iconlink = data['groupDetail']['iconLink'];
         return CustomScrollView(
           scrollDirection: Axis.vertical,
           slivers: <Widget>[
@@ -89,39 +93,67 @@ class _JoinGroupState extends State<JoinGroup> {
                       childCount: data['fetchGroupMember'].length),
                 )),
             SliverToBoxAdapter(
-              child: Mutation(mutation.addToGroup, builder: (
-                addToGroup, {
-                bool loading,
-                Map data,
-                Exception error,
-              }) {
-                return Container(
-                  margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                  color: Colors.green,
-                  height: 50.0,
-                  padding: EdgeInsets.only(left: 20.0, top: 10.0, bottom: 5.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      addToGroup({
-                        'groupId': widget.groupId,
-                        'members': [widget.id]
-                      });
-                      var route = MaterialPageRoute(
-                          builder: (BuildContext context) => FlockHome());
-                      Navigator.of(context).pop();
-                      Navigator.of(context).push(route);
-                    },
-                    child: Text(
-                      "Join Group",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 25.0,
-                          color: Theme.of(context).primaryColor),
+              child: Mutation(
+                mutation.addToGroup,
+                builder: (
+                  addToGroup, {
+                  bool loading,
+                  Map data,
+                  Exception error,
+                }) {
+                  return Container(
+                    margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                    color: Colors.green,
+                    height: 50.0,
+                    padding:
+                        EdgeInsets.only(left: 20.0, top: 10.0, bottom: 5.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            });
+                        addToGroup({
+                          'groupId': widget.groupId,
+                          'members': [widget.id]
+                        });
+                      },
+                      child: Text(
+                        "Join Group",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 25.0,
+                            color: Theme.of(context).primaryColor),
+                      ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                },
+                onCompleted: (Map<String, dynamic> data) {
+                  var route = MaterialPageRoute(
+                      builder: (BuildContext context) => ChatScreen(
+                            widget.groupId,
+                            name,
+                            "group",
+                            widget.groupId,
+                            iconlink,
+                            isGroup: 1,
+                          ));
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(route);
+                },
+              ),
             ),
+            CommonRating(
+              widget.groupId,
+              iconlink,
+              widget.id,
+              show: 0,
+            )
           ],
         );
       }),

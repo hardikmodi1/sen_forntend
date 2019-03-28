@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
+import './login.dart';
 import '../errors/userError.dart';
 import '../graphql/user/mutation/registerUser.dart' as mutations;
-import './login.dart';
 import '../home/home.dart';
 
 class FirstSignup extends StatefulWidget {
@@ -14,10 +14,14 @@ class FirstSignup extends StatefulWidget {
 }
 
 class _FirstSignupState extends State<FirstSignup> {
-  String _emailValidate = "", _passValidate = "";
+  String _emailValidate = "",
+      _passValidate = "",
+      _userValidate = "",
+      _phoneValidate = "";
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
 
   bool loggedin;
   @override
@@ -67,12 +71,29 @@ class _FirstSignupState extends State<FirstSignup> {
       decoration: InputDecoration(
         errorText: _emailValidate != "" ? _emailValidate : null,
         focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(32.0),
+            borderRadius: BorderRadius.circular(15.0),
             borderSide: BorderSide(color: Colors.greenAccent, width: 2.0)),
         hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(32.0),
+            borderRadius: BorderRadius.circular(15.0),
+            borderSide: BorderSide(color: Colors.teal)),
+      ),
+    );
+
+    final username = TextField(
+      controller: _usernameController,
+      keyboardType: TextInputType.text,
+      autofocus: false,
+      decoration: InputDecoration(
+        errorText: _userValidate != "" ? _userValidate : null,
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15.0),
+            borderSide: BorderSide(color: Colors.greenAccent, width: 2.0)),
+        hintText: 'Username',
+        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15.0),
             borderSide: BorderSide(color: Colors.teal)),
       ),
     );
@@ -85,10 +106,10 @@ class _FirstSignupState extends State<FirstSignup> {
         errorText: _passValidate != "" ? _passValidate : null,
         hintText: 'Password',
         focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(32.0),
+            borderRadius: BorderRadius.circular(15.0),
             borderSide: BorderSide(color: Colors.greenAccent, width: 2.0)),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
       ),
     );
 
@@ -98,11 +119,12 @@ class _FirstSignupState extends State<FirstSignup> {
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: 'Mobile Number',
+        errorText: _phoneValidate != "" ? _phoneValidate : null,
         focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(32.0),
+            borderRadius: BorderRadius.circular(15.0),
             borderSide: BorderSide(color: Colors.greenAccent, width: 2.0)),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
       ),
     );
 
@@ -123,6 +145,8 @@ class _FirstSignupState extends State<FirstSignup> {
       setState(() {
         _emailValidate = "";
         _passValidate = "";
+        _phoneValidate = "";
+        _userValidate = "";
       });
       List errors = data['register'];
       for (int i = 0; i < errors.length; i++) {
@@ -133,6 +157,12 @@ class _FirstSignupState extends State<FirstSignup> {
           _passValidate = errors[i]['path'] == "password"
               ? _passValidate + errors[i]['message'] + '\n'
               : _passValidate;
+          _userValidate = errors[i]['path'] == "username"
+              ? _userValidate + errors[i]['message'] + '\n'
+              : _userValidate;
+          _phoneValidate = errors[i]['path'] == "phone"
+              ? _phoneValidate + errors[i]['message'] + '\n'
+              : _phoneValidate;
         });
       }
     }
@@ -141,27 +171,15 @@ class _FirstSignupState extends State<FirstSignup> {
       setState(() {
         _emailValidate = "";
         _passValidate = "";
+        _userValidate = "";
+        _phoneValidate = "";
       });
       final storage = new FlutterSecureStorage();
       await storage.write(key: 'token', value: data['register'][0]['id']);
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Thanks for registering"),
-              actions: <Widget>[
-                SimpleDialogOption(
-                  child: Text('Okay'),
-                  onPressed: () {
-                    var route = MaterialPageRoute(
-                        builder: (BuildContext context) => FlockHome());
-                    Navigator.of(context).pushAndRemoveUntil(
-                        route, (Route<dynamic> route) => false);
-                  },
-                )
-              ],
-            );
-          });
+      var route =
+          MaterialPageRoute(builder: (BuildContext context) => FlockHome());
+      Navigator.of(context)
+          .pushAndRemoveUntil(route, (Route<dynamic> route) => false);
     }
 
     return loggedin == true
@@ -178,6 +196,8 @@ class _FirstSignupState extends State<FirstSignup> {
                     logo,
                     SizedBox(height: 48.0),
                     email,
+                    SizedBox(height: 8.0),
+                    username,
                     SizedBox(height: 8.0),
                     phone,
                     SizedBox(height: 8.0),
@@ -197,11 +217,21 @@ class _FirstSignupState extends State<FirstSignup> {
                             ),
                             onPressed: () {
                               if (_emailController.text.isNotEmpty &&
-                                  _passwordController.text.isNotEmpty) {
+                                  _passwordController.text.isNotEmpty &&
+                                  _phoneController.text.isNotEmpty &&
+                                  _usernameController.text.isNotEmpty) {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    });
                                 register({
                                   'email': _emailController.text,
                                   'password': _passwordController.text,
-                                  'phone': _phoneController.text
+                                  'phone': _phoneController.text,
+                                  'username': _usernameController.text
                                 });
                               } else {
                                 setState(() {
@@ -212,6 +242,13 @@ class _FirstSignupState extends State<FirstSignup> {
                                       _passwordController.text.isEmpty
                                           ? blankError
                                           : "";
+                                  _userValidate =
+                                      _usernameController.text.isEmpty
+                                          ? blankError
+                                          : "";
+                                  _phoneValidate = _phoneController.text.isEmpty
+                                      ? blankError
+                                      : "";
                                 });
                               }
                               print(error);
@@ -219,6 +256,7 @@ class _FirstSignupState extends State<FirstSignup> {
                             child: Text('Register'));
                       },
                       onCompleted: (Map<String, dynamic> data) {
+                        Navigator.of(context).pop();
                         data['register'][0]['id'] != null
                             ? success(data)
                             : setError(data);

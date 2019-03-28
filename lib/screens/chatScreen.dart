@@ -4,8 +4,8 @@ import 'package:flock/screens/personDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-import '../graphql/message/query/fetchMessage.dart' as queries;
 import '../graphql/message/mutation/createMessage.dart' as mutations;
+import '../graphql/message/query/fetchMessage.dart' as queries;
 
 class ChatScreen extends StatefulWidget {
   final String receiverId, username, senderId, email, image;
@@ -113,8 +113,19 @@ class _ChatScreenState extends State<ChatScreen> {
                                                       color:
                                                           Colors.orangeAccent),
                                                 ),
-                                                Text(data['fetchMessage'][i]
-                                                    ['text']),
+                                                Text(
+                                                  data['fetchMessage'][i]
+                                                      ['text'],
+                                                ),
+                                                Container(
+                                                  child: Text(
+                                                    data['fetchMessage'][i]
+                                                        ['time'],
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                )
                                               ],
                                             ),
                                           ),
@@ -140,8 +151,20 @@ class _ChatScreenState extends State<ChatScreen> {
                                                         .size
                                                         .width -
                                                     90),
-                                            child: Text(data['fetchMessage'][i]
-                                                ['text']),
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(data['fetchMessage'][i]
+                                                      ['text']),
+                                                  Text(
+                                                    data['fetchMessage'][i]
+                                                        ['time'],
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                    ),
+                                                  )
+                                                ]),
                                           ),
                                         ),
                                       ),
@@ -162,7 +185,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Container(
-                          width: 300.0,
+                          width: MediaQuery.of(context).size.width - 45.0,
                           margin: EdgeInsets.only(bottom: 0),
                           child: Padding(
                             padding: EdgeInsets.only(left: 5.0, bottom: 5.0),
@@ -172,6 +195,12 @@ class _ChatScreenState extends State<ChatScreen> {
                                 borderRadius: BorderRadius.circular(18.0),
                               ),
                               child: TextField(
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 20.0,
+                                      color: Colors.black),
+                                  maxLines: 1,
+                                  keyboardType: TextInputType.multiline,
                                   controller: textEditingController,
                                   decoration: InputDecoration(
                                       focusedBorder: OutlineInputBorder(
@@ -191,34 +220,40 @@ class _ChatScreenState extends State<ChatScreen> {
                                               BorderSide(color: Colors.teal)))),
                             ),
                           )),
-                      Mutation(mutations.createMessage, builder: (
-                        createMessage, {
-                        bool loading,
-                        Map data,
-                        Exception error,
-                      }) {
-                        return Padding(
-                          padding: EdgeInsets.only(left: 5.0, bottom: 5.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              if (textEditingController.text.isNotEmpty) {
-                                createMessage({
-                                  'senderId': widget.senderId,
-                                  'receiverId': widget.receiverId,
-                                  'text': textEditingController.text
-                                });
-                                setState(() {
-                                  textEditingController.clear();
-                                });
-                              }
-                            },
-                            child: CircleAvatar(
-                              backgroundColor: Theme.of(context).primaryColor,
-                              child: Icon(Icons.send),
+                      Mutation(
+                        mutations.createMessage,
+                        builder: (
+                          createMessage, {
+                          bool loading,
+                          Map data,
+                          Exception error,
+                        }) {
+                          return Padding(
+                            padding: EdgeInsets.only(top: 4.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (textEditingController.text.isNotEmpty) {
+                                  createMessage({
+                                    'senderId': widget.senderId,
+                                    'receiverId': widget.receiverId,
+                                    'text': textEditingController.text
+                                  });
+                                }
+                              },
+                              child: CircleAvatar(
+                                radius: 20.0,
+                                backgroundColor: Theme.of(context).primaryColor,
+                                child: Icon(Icons.send),
+                              ),
                             ),
-                          ),
-                        );
-                      })
+                          );
+                        },
+                        onCompleted: (Map<String, dynamic> data) {
+                          setState(() {
+                            textEditingController.clear();
+                          });
+                        },
+                      )
                     ],
                   ),
                 ],

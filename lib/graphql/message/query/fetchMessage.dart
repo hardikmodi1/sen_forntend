@@ -4,6 +4,7 @@ String fetchMessage = """
       senderId
       receiverId
       text
+      time
       user{
         email
         username

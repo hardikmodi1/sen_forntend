@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flock/graphql/user/mutation/setRange.dart';
 import 'package:flock/graphql/user/query/getRange.dart';
 import 'package:flock/profile/header.dart';
@@ -16,13 +18,14 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   double _lowerValue;
   double _upperValue;
-
+  String text;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _lowerValue = 0.0;
     _upperValue = 100.0;
+    text = "Save settings";
   }
 
   int flag = 0;
@@ -67,20 +70,42 @@ class _SettingsState extends State<Settings> {
               },
             );
           }),
-          Mutation(setRange, builder: (
-            setRange, {
-            bool loading,
-            Map data,
-            Exception error,
-          }) {
-            return MaterialButton(
-              color: Theme.of(context).primaryColor,
-              onPressed: () {
-                setRange({'id': widget.id, 'range': _lowerValue});
-              },
-              child: Text("Save settings"),
-            );
-          })
+          Mutation(
+            setRange,
+            builder: (
+              setRange, {
+              bool loading,
+              Map data,
+              Exception error,
+            }) {
+              return MaterialButton(
+                color: Theme.of(context).primaryColor,
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      });
+                  setRange({'id': widget.id, 'range': _lowerValue});
+                },
+                child: Text(text),
+              );
+            },
+            onCompleted: (Map<String, dynamic> data) {
+              Navigator.of(context).pop();
+              setState(() {
+                text = "Saved";
+              });
+              Timer timer = new Timer(new Duration(seconds: 2), () {
+                debugPrint("Print after 5 seconds");
+                setState(() {
+                  text = "Save settings";
+                });
+              });
+            },
+          )
         ],
       ),
     );

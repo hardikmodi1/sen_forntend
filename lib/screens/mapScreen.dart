@@ -85,6 +85,12 @@ class _MapScreenState extends State<MapScreen> {
     return Set<Marker>.of(markers.values);
   }
 
+  Future<void> _goToLocation(double lat, double long) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: LatLng(long, lat), zoom: 15, tilt: 50.0, bearing: 45.0)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,38 +98,120 @@ class _MapScreenState extends State<MapScreen> {
         title: Text("Location"),
         leading: true,
       ),
-      body: Container(
-        width: double.infinity,
-        height: 350.0,
-        child: _currentLocation == null
-            ? Text("Fetching location...")
-            : Query(allUser, variables: {
-                'id': widget.id,
-                'long': _currentLocation['longitude'],
-                'lat': _currentLocation['latitude']
-              }, builder: ({
-                bool loading,
-                Map data,
-                Exception error,
-              }) {
-                if (loading == true) {
-                  return Text("Loading...");
-                } else if (error != null) {
-                  return Text("Error in fetching data...");
-                }
-                return GoogleMap(
-                  markers: setMarkers(data),
-                  initialCameraPosition: CameraPosition(
-                      target: LatLng(_currentLocation['latitude'],
-                          _currentLocation['longitude']),
-                      zoom: 14.4746),
-                  mapType: MapType.terrain,
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                  },
-                );
-              }),
-      ),
+      body: _currentLocation == null
+          ? Text("Fetching location...")
+          : Query(allUser, variables: {
+              'id': widget.id,
+              'long': _currentLocation['longitude'],
+              'lat': _currentLocation['latitude']
+            }, builder: ({
+              bool loading,
+              Map data,
+              Exception error,
+            }) {
+              if (loading == true) {
+                return Text("Loading...");
+              } else if (error != null) {
+                return Text("Error in fetching data...");
+              }
+              return Stack(
+                children: <Widget>[
+                  Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: GoogleMap(
+                      mapType: MapType.normal,
+                      initialCameraPosition: CameraPosition(
+                          target: LatLng(_currentLocation['latitude'],
+                              _currentLocation['longitude']),
+                          zoom: 14.4746),
+                      onMapCreated: (GoogleMapController controller) {
+                        _controller.complete(controller);
+                      },
+                      markers: setMarkers(data),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 20.0),
+                        height: 130.0,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: data['allUser'].length,
+                          itemBuilder: (context, i) => GestureDetector(
+                                onTap: () {
+                                  _goToLocation(
+                                      data['allUser'][i]['location']
+                                          ['coordinates'][0],
+                                      data['allUser'][i]['location']
+                                          ['coordinates'][1]);
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 10.0),
+                                  child: FittedBox(
+                                    child: Material(
+                                      color: Colors.white,
+                                      elevation: 14.0,
+                                      borderRadius: BorderRadius.circular(24.0),
+                                      shadowColor: Color(0x802196F3),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Container(
+                                            width: 130.0,
+                                            height: 130.0,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(24.0),
+                                              child: Image(
+                                                fit: BoxFit.fill,
+                                                image: data['allUser'][i]
+                                                            ['image'] ==
+                                                        null
+                                                    ? AssetImage(
+                                                        'assets/user.png')
+                                                    : NetworkImage(
+                                                        data['allUser'][i]
+                                                            ['image']),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            child: Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                    data['allUser'][i]['email'],
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.green,
+                                                        fontSize: 17.0),
+                                                  ),
+                                                  Text(data['allUser'][i]
+                                                      ['username']),
+                                                  Text(data['allUser'][i]
+                                                      ['phone'])
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                        )),
+                  )
+                ],
+              );
+            }),
     );
   }
 }

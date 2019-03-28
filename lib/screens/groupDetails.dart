@@ -1,18 +1,17 @@
-import 'package:flock/graphql/groups/query/fetchRatingByGroupId.dart';
-import 'package:flock/screens/giveRating.dart';
-import 'package:flock/screens/linear_percent_indicator.dart';
+import 'package:flock/home/home.dart';
+import 'package:flock/screens/commonRating.dart';
 import 'package:flock/screens/updateDescription.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../shared/uploadImage.dart' as upload;
-import '../graphql/groups/query/groupDetailsQuery.dart' as query;
-import '../graphql/groups/mutation/updateGroupDescription.dart' as mutations;
 import './addToGroup.dart';
-import '../graphql/groups/mutation/makeAdmin.dart';
 import '../graphql/groups/mutation/dismissAdmin.dart';
+import '../graphql/groups/mutation/makeAdmin.dart';
 import '../graphql/groups/mutation/remove.dart';
+import '../graphql/groups/mutation/updateGroupDescription.dart' as mutations;
+import '../graphql/groups/query/groupDetailsQuery.dart' as query;
+import '../shared/uploadImage.dart' as upload;
 
 class GroupDetail extends StatefulWidget {
   final String groupId, image, currentUserId;
@@ -272,91 +271,68 @@ class _GroupDetailState extends State<GroupDetail> {
                       childCount: data['fetchGroupMember'].length),
                 )),
             SliverToBoxAdapter(
-              child: Card(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: Query(fetchRatingByGroupId, variables: {
-                    'groupId': widget.groupId,
-                  }, builder: ({
+              child: Container(
+                height: 45.0,
+                margin: EdgeInsets.only(top: 5.0),
+                color: Colors.white,
+                padding: EdgeInsets.only(left: 20.0, top: 10.0, bottom: 5.0),
+                child: Mutation(
+                  remove,
+                  builder: (
+                    remove, {
                     bool loading,
                     Map data,
                     Exception error,
                   }) {
-                    if (loading ||
-                        data['fetchRatingByGroupId']['ratings'] == null)
-                      return Text("Fetching User ratings...");
-                    else if (error != null)
-                      return Text("Some error fetching data...");
-                    else {
-                      return Column(
-                        children: <Widget>[
-                          Text(
-                            '${data['fetchRatingByGroupId']['total']} Member reviews',
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20.0),
-                          ),
-                          ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemCount:
-                                data['fetchRatingByGroupId']['ratings'].length -
-                                    1,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Row(
-                                children: <Widget>[
-                                  Text('${index + 1}'),
-                                  Icon(
-                                    Icons.star,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 25.0,
-                                  ),
-                                  LinearPercentIndicator(
-                                    width:
-                                        MediaQuery.of(context).size.width - 100,
-                                    animation: true,
-                                    lineHeight: 20.0,
-                                    animationDuration: 2500,
-                                    percent: data['fetchRatingByGroupId']
-                                            ['ratings'][index + 1] /
-                                        data['fetchRatingByGroupId']['total'],
-                                    center: Text(
-                                        '${((data['fetchRatingByGroupId']['ratings'][index + 1] / data['fetchRatingByGroupId']['total']) * 100).toStringAsFixed(2)}%'),
-                                    linearStrokeCap: LinearStrokeCap.roundAll,
-                                    progressColor: Colors.yellow,
-                                    backgroundColor:
-                                        Colors.grey.withOpacity(0.3),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 10.0),
-                                  ),
-                                  Text(
-                                      '${data['fetchRatingByGroupId']['ratings'][index + 1]}')
-                                ],
+                    return GestureDetector(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Center(
+                                child: CircularProgressIndicator(),
                               );
-                            },
+                            });
+                        remove({
+                          'groupId': widget.groupId,
+                          'memberId': widget.currentUserId
+                        });
+                      },
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.exit_to_app,
+                            color: Colors.red,
                           ),
-                          MaterialButton(
-                            color: Colors.blueGrey.withOpacity(0.3),
-                            onPressed: () {
-                              var route = MaterialPageRoute(
-                                  builder: (BuildContext context) => GiveRating(
-                                      widget.groupId,
-                                      widget.image,
-                                      widget.currentUserId));
-                              Navigator.of(context).pop();
-                              Navigator.of(context).push(route);
-                            },
-                            child: Text("Give a rating"),
-                          )
+                          Padding(
+                            padding: EdgeInsets.only(left: 10.0),
+                          ),
+                          Text(
+                            "Exit Group",
+                            style: TextStyle(
+                                fontSize: 22.0,
+                                color: Theme.of(context).primaryColor),
+                          ),
                         ],
-                      );
-                    }
-                  }),
+                      ),
+                    );
+                  },
+                  onCompleted: (Map<String, dynamic> data) {
+                    var route = MaterialPageRoute(
+                        builder: (BuildContext context) => FlockHome());
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushAndRemoveUntil(
+                        route, (Route<dynamic> route) => false);
+                  },
                 ),
               ),
             ),
+            CommonRating(
+              widget.groupId,
+              widget.image,
+              widget.currentUserId,
+              show: 1,
+            )
           ],
         );
       }),

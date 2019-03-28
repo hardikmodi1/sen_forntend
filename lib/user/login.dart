@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
+import './first_signup.dart';
 import '../errors/userError.dart';
 import '../graphql/user/mutation/loginUser.dart' as mutations;
-import './first_signup.dart';
 import '../home/home.dart';
 
 class Login extends StatefulWidget {
@@ -46,12 +46,12 @@ class _LoginState extends State<Login> {
       decoration: InputDecoration(
         errorText: _emailValidate != "" ? _emailValidate : null,
         focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(32.0),
+            borderRadius: BorderRadius.circular(15.0),
             borderSide: BorderSide(color: Colors.greenAccent, width: 2.0)),
         hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(32.0),
+            borderRadius: BorderRadius.circular(15.0),
             borderSide: BorderSide(color: Colors.teal)),
       ),
     );
@@ -64,10 +64,10 @@ class _LoginState extends State<Login> {
         errorText: _passValidate != "" ? _passValidate : null,
         hintText: 'Password',
         focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(32.0),
+            borderRadius: BorderRadius.circular(15.0),
             borderSide: BorderSide(color: Colors.greenAccent, width: 2.0)),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
       ),
     );
 
@@ -109,24 +109,10 @@ class _LoginState extends State<Login> {
       });
       final storage = new FlutterSecureStorage();
       await storage.write(key: 'token', value: data['login'][0]['id']);
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Thanks for login"),
-              actions: <Widget>[
-                SimpleDialogOption(
-                  child: Text('Dismiss'),
-                  onPressed: () {
-                    var route = MaterialPageRoute(
-                        builder: (BuildContext context) => FlockHome());
-                    Navigator.of(context).pushAndRemoveUntil(
-                        route, (Route<dynamic> route) => false);
-                  },
-                )
-              ],
-            );
-          });
+      var route =
+          MaterialPageRoute(builder: (BuildContext context) => FlockHome());
+      Navigator.of(context)
+          .pushAndRemoveUntil(route, (Route<dynamic> route) => false);
     }
 
     return Container(
@@ -159,6 +145,13 @@ class _LoginState extends State<Login> {
                       onPressed: () {
                         if (_emailController.text.isNotEmpty &&
                             _passwordController.text.isNotEmpty) {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              });
                           login({
                             'email': _emailController.text,
                             'password': _passwordController.text
@@ -177,6 +170,7 @@ class _LoginState extends State<Login> {
                       child: Text('Login'));
                 },
                 onCompleted: (Map<String, dynamic> data) {
+                  Navigator.of(context).pop();
                   data['login'][0]['id'] != null
                       ? success(data)
                       : setError(data);

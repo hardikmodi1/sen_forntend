@@ -78,6 +78,13 @@ class _GiveRatingState extends State<GiveRating> {
                     onPressed: rating == 0.0
                         ? null
                         : () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                });
                             if (rating != 0.0)
                               addGroupRating({
                                 'groupId': widget.groupId,
@@ -93,6 +100,7 @@ class _GiveRatingState extends State<GiveRating> {
                   var route = MaterialPageRoute(
                       builder: (BuildContext context) => GroupDetail(
                           widget.groupId, widget.image, widget.currentUserId));
+                  Navigator.of(context).pop();
                   Navigator.of(context).pop();
                   Navigator.of(context).push(route);
                 },
