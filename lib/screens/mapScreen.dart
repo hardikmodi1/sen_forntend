@@ -1,12 +1,12 @@
 import 'dart:async';
-import 'package:location/location.dart' as loc;
-import 'package:flutter/services.dart';
 
 import 'package:flock/graphql/user/query/allUser.dart';
 import 'package:flock/profile/header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:location/location.dart' as loc;
 
 class MapScreen extends StatefulWidget {
   final String id;

@@ -1,13 +1,14 @@
+import 'dart:async';
+
 import 'package:flock/home/home.dart';
 import 'package:flock/profile/header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:location/location.dart' as loc;
-import 'dart:async';
-import 'package:flutter/services.dart';
 
-import '../shared/uploadImage.dart' as upload;
 import '../graphql/groups/mutation/createGroup.dart' as mutations;
+import '../shared/uploadImage.dart' as upload;
 
 class FinalGroup extends StatefulWidget {
   final List<String> selected;

@@ -1,11 +1,12 @@
+import 'dart:async';
+
 import 'package:flock/profile/header.dart';
 import 'package:flock/screens/finalGroup.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart' as loc;
-import 'dart:async';
 import 'package:flutter/services.dart';
-
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:location/location.dart' as loc;
+
 import '../graphql/user/query/allUser.dart';
 
 class CreateGroup extends StatefulWidget {

@@ -1,10 +1,11 @@
+import 'dart:async';
+
 import 'package:flock/graphql/groups/query/fetchGroupToJoin.dart';
 import 'package:flock/screens/joinGroup.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:location/location.dart' as loc;
-import 'dart:async';
-import 'package:flutter/services.dart';
 
 class ListGroupToJoin extends StatefulWidget {
   final String id;
