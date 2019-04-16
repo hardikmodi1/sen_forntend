@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class EnterOTP extends StatefulWidget {
-  final String phone;
-  EnterOTP(this.phone);
+  final String email;
+  EnterOTP(this.email);
   _EnterOTPState createState() => _EnterOTPState();
 }
 
@@ -23,11 +23,6 @@ class _EnterOTPState extends State<EnterOTP> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              "OTP has been sent to number xxxxxx" +
-                  widget.phone.substring(8, 12),
-              style: TextStyle(color: Colors.grey),
-            ),
             Container(
               margin: EdgeInsets.only(top: 5.0),
               width: MediaQuery.of(context).size.width / 2,
@@ -58,7 +53,7 @@ class _EnterOTPState extends State<EnterOTP> {
                     //TODO: show loaidng icon here
                     print(int.parse(_otpController.text));
                     checkOTP({
-                      'phone': widget.phone,
+                      'email': widget.email,
                       'OTP': int.parse(_otpController.text)
                     });
                   },
@@ -69,10 +64,11 @@ class _EnterOTPState extends State<EnterOTP> {
                 );
               },
               onCompleted: (Map<String, dynamic> data) {
+                print(data);
                 if (data['checkOTP'] == null) {
                   var route = MaterialPageRoute(
                       builder: (BuildContext context) =>
-                          NewPassword(widget.phone));
+                          NewPassword(widget.email));
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
                   Navigator.of(context).push(route);

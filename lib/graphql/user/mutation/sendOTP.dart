@@ -1,6 +1,6 @@
 String sendForgotPasswordEmail = """
-  mutation sendForgotPasswordEmail(\$phone: String!) {
-    sendForgotPasswordEmail(phone: \$phone) {
+  mutation sendForgotPasswordEmail(\$email: String!) {
+    sendForgotPasswordEmail(email: \$email) {
       path
       message
     }

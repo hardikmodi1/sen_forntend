@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class ChangePasswordFirst extends StatelessWidget {
-  final String id, phone;
-  ChangePasswordFirst(this.id, this.phone);
+  final String id, email;
+  ChangePasswordFirst(this.id, this.email);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +26,7 @@ class ChangePasswordFirst extends StatelessWidget {
             return MaterialButton(
               onPressed: () {
                 //TODO: show loaidng icon here
-                sendForgotPasswordEmail({'phone': phone});
+                sendForgotPasswordEmail({'email': email});
               },
               child: Text("Click here to send OTP"),
               color: Colors.green,
@@ -35,7 +35,7 @@ class ChangePasswordFirst extends StatelessWidget {
           onCompleted: (Map<String, dynamic> data) {
             //TODO: hide loading icon here.
             var route = MaterialPageRoute(
-                builder: (BuildContext context) => EnterOTP(phone));
+                builder: (BuildContext context) => EnterOTP(email));
             Navigator.of(context).push(route);
           },
         ),

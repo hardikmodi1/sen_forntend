@@ -1,13 +1,13 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flock/graphql/user/query/meQuery.dart';
 import 'package:flock/profile/updateUsername.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../graphql/user/mutation/updateProfile.dart' as mutations;
-import './fullScreen.dart';
 import '../shared/uploadImage.dart' as upload;
 
 class Profile extends StatefulWidget {
@@ -59,7 +59,14 @@ class _ProfileState extends State<Profile> {
                             ),
                             title: Text("Camera"),
                             onTap: () {
-                              upload.upload(name).then((onValue) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  });
+                              upload.upload(name, 0).then((onValue) {
                                 print(onValue);
                                 updateProfile(
                                     {'id': widget.id, 'image': onValue});
@@ -77,13 +84,24 @@ class _ProfileState extends State<Profile> {
                           ),
                           title: Text("Gallery"),
                           onTap: () {
-                            upload.upload(name).then((onValue) {
+                            upload.upload(name, 1).then((onValue) {
                               print(onValue);
+                              updateProfile(
+                                  {'id': widget.id, 'image': onValue});
+                              if (onValue != null) {
+                                setState(() {
+                                  url = onValue;
+                                });
+                              }
                             });
                           },
                         ),
                       ],
                     );
+                  },
+                  onCompleted: (Map<String, dynamic> data) {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
                   },
                 ),
               ],

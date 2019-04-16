@@ -22,7 +22,6 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController textEditingController =
       new TextEditingController();
   FocusNode focusNode = new FocusNode();
-  SocketClient socketClient;
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +140,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: <Widget>[
                                       Card(
-                                        color: Color(0xffdcf8c6),
+                                        color: Colors.blue.withOpacity(0.7),
                                         margin: EdgeInsets.only(left: 0.0),
                                         child: Padding(
                                           padding: EdgeInsets.all(10.0),
@@ -161,7 +160,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                                     data['fetchMessage'][i]
                                                         ['time'],
                                                     style: TextStyle(
-                                                      color: Colors.grey,
+                                                      color: Colors.black
+                                                          .withOpacity(0.4),
                                                     ),
                                                   )
                                                 ]),
@@ -170,6 +170,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       ),
                                       Image.asset(
                                         'assets/right.png',
+                                        color: Colors.blue.withOpacity(0.7),
                                       ),
                                     ],
                                   ),

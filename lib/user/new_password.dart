@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class NewPassword extends StatefulWidget {
-  final String phone;
-  NewPassword(this.phone);
+  final String email;
+  NewPassword(this.email);
   _NewPasswordState createState() => _NewPasswordState();
 }
 
@@ -51,7 +51,7 @@ class _NewPasswordState extends State<NewPassword> {
                   onPressed: () {
                     //TODO: show loaidng icon here
                     forgotPasswordChange({
-                      'phone': widget.phone,
+                      'email': widget.email,
                       'newPassword': _passwordController.text
                     });
                   },

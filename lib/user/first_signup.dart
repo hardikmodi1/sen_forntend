@@ -66,6 +66,7 @@ class _FirstSignupState extends State<FirstSignup> {
 
     final email = TextField(
       controller: _emailController,
+      key: Key("email"),
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
       decoration: InputDecoration(
@@ -83,6 +84,7 @@ class _FirstSignupState extends State<FirstSignup> {
 
     final username = TextField(
       controller: _usernameController,
+      key: Key("username"),
       keyboardType: TextInputType.text,
       autofocus: false,
       decoration: InputDecoration(
@@ -101,6 +103,7 @@ class _FirstSignupState extends State<FirstSignup> {
     final password = TextField(
       controller: _passwordController,
       autofocus: false,
+      key: Key("password"),
       obscureText: true,
       decoration: InputDecoration(
         errorText: _passValidate != "" ? _passValidate : null,
@@ -116,6 +119,7 @@ class _FirstSignupState extends State<FirstSignup> {
     final phone = TextField(
       controller: _phoneController,
       autofocus: false,
+      key: Key("phone"),
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: 'Mobile Number',

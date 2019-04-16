@@ -1,6 +1,6 @@
 String checkOTP = """
-  mutation checkOTP(\$phone: String!,\$OTP: Int!) {
-    checkOTP(phone: \$phone, OTP: \$OTP) {
+  mutation checkOTP(\$email: String!,\$OTP: Int!) {
+    checkOTP(email: \$email, OTP: \$OTP) {
       path
       message
     }

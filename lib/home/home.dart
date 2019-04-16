@@ -1,3 +1,5 @@
+import 'package:flock/screens/EventContainer.dart';
+import 'package:flock/screens/createEvent.dart';
 import 'package:flock/screens/createGroup.dart';
 import 'package:flock/screens/listGroupToJoin.dart';
 import 'package:flock/screens/mapScreen.dart';
@@ -7,11 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import '../graphql/user/query/meQuery.dart';
+import '../profile/profile.dart';
 import '../screens/groupChat.dart';
 import '../screens/personalChat.dart';
 import '../user/first_signup.dart';
-import '../graphql/user/query/meQuery.dart';
-import '../profile/profile.dart';
 
 class FlockHome extends StatefulWidget {
   @override
@@ -127,7 +129,7 @@ class _FlockHomeState extends State<FlockHome>
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     ),
-                    Icon(Icons.more_vert),
+                    // Icon(Icons.more_vert),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     ),
@@ -160,7 +162,7 @@ class _FlockHomeState extends State<FlockHome>
                                 )
                               : data['me']['image'] == null
                                   ? CircleAvatar(
-                                      backgroundColor: Colors.green,
+                                      backgroundColor: Colors.white,
                                       child: GestureDetector(
                                         onTap: () {
                                           redirect(data['me']['image'],
@@ -190,6 +192,34 @@ class _FlockHomeState extends State<FlockHome>
                                               image: showImage(
                                                   data['me']['image']))),
                                     ),
+                        ),
+                        ListTile(
+                          title: Text("Create Event"),
+                          onTap: () {
+                            var route = MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    CreateEvent(id));
+                            Navigator.of(context).pop();
+                            Navigator.of(context).push(route);
+                          },
+                          leading: Icon(
+                            Icons.event,
+                            color: Colors.black,
+                          ),
+                        ),
+                        ListTile(
+                          title: Text("Events"),
+                          onTap: () {
+                            var route = MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    EventContainer(id));
+                            Navigator.of(context).pop();
+                            Navigator.of(context).push(route);
+                          },
+                          leading: Icon(
+                            Icons.event,
+                            color: Colors.black,
+                          ),
                         ),
                         ListTile(
                           title: Text("Create Group"),
@@ -225,7 +255,7 @@ class _FlockHomeState extends State<FlockHome>
                             var route = MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                     ChangePasswordFirst(
-                                        id, data['me']['phone']));
+                                        id, data['me']['email']));
                             Navigator.of(context).pop();
                             Navigator.of(context).push(route);
                           },
@@ -234,7 +264,6 @@ class _FlockHomeState extends State<FlockHome>
                             color: Colors.black,
                           ),
                         ),
-                        Divider(),
                         ListTile(
                           title: Text("Locate on map"),
                           onTap: () {
@@ -249,7 +278,6 @@ class _FlockHomeState extends State<FlockHome>
                             color: Colors.black,
                           ),
                         ),
-                        Divider(),
                         ListTile(
                           title: Text("Settings"),
                           onTap: () {
@@ -292,14 +320,6 @@ class _FlockHomeState extends State<FlockHome>
                     GroupChat(id),
                   ],
                 ),
-                floatingActionButton: new FloatingActionButton(
-                  backgroundColor: Theme.of(context).accentColor,
-                  child: new Icon(
-                    Icons.message,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => print("open chats"),
-                ),
               )
             : new Scaffold(
                 appBar: new AppBar(
@@ -329,14 +349,6 @@ class _FlockHomeState extends State<FlockHome>
                         id,
                         text: search,
                       ),
-                floatingActionButton: new FloatingActionButton(
-                  backgroundColor: Theme.of(context).accentColor,
-                  child: new Icon(
-                    Icons.message,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => print("open chats"),
-                ),
               )
         : FirstSignup();
   }

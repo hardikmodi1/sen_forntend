@@ -91,7 +91,7 @@ class _FinalGroupState extends State<FinalGroup> {
                         ),
                         title: Text("Camera"),
                         onTap: () {
-                          upload.upload(name).then((onValue) {
+                          upload.upload(name, 0).then((onValue) {
                             if (onValue != null) {
                               setState(() {
                                 url = onValue;
@@ -107,8 +107,13 @@ class _FinalGroupState extends State<FinalGroup> {
                       ),
                       title: Text("Gallery"),
                       onTap: () {
-                        upload.upload(name).then((onValue) {
-                          print(onValue);
+                        upload.upload(name, 1).then((onValue) {
+                          if (onValue != null) {
+                            setState(() {
+                              url = onValue;
+                            });
+                            print("fdfdfdfd" + url);
+                          }
                         });
                       },
                     ),

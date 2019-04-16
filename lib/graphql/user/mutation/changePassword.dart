@@ -1,6 +1,6 @@
 String forgotPasswordChange = """
-  mutation forgotPasswordChange(\$newPassword: String!,\$phone: String!) {
-    forgotPasswordChange(newPassword: \$newPassword, phone: \$phone) {
+  mutation forgotPasswordChange(\$newPassword: String!,\$email: String!) {
+    forgotPasswordChange(newPassword: \$newPassword, email: \$email) {
       path
       message
     }

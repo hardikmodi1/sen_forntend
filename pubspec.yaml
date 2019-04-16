@@ -19,8 +19,12 @@ dependencies:
     url_launcher:
     flutter_secure_storage:
     image_picker:
-    firebase_storage:
-    google_maps_flutter:
+    firebase_storage: 2.1.0+1
+    google_maps_flutter: 0.5.7
+    flutter_swiper: ^1.1.6
+    flutter_spinkit: "^3.1.0"
+    flutter_tindercard: ^0.1.4
+    fluttie: ^0.3.1
     flutter:
         sdk: flutter
 
@@ -43,6 +47,7 @@ flutter:
     uses-material-design: true
     # To add assets to your application, add an assets section, like this:
     assets:
+        - assets/loading.json
         - assets/logo.png
         - assets/user.png
         - assets/group.png

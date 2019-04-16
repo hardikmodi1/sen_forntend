@@ -4,6 +4,7 @@ import 'package:flock/graphql/user/query/allUser.dart';
 import 'package:flock/screens/chatScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:location/location.dart' as loc;
 
@@ -78,9 +79,15 @@ class _PersonalChatState extends State<PersonalChat> {
   @override
   Widget build(BuildContext context) {
     return _currentLocation == null
-        ? Container(
-            child: Text("Fetching Location"),
-          )
+        ? Center(child: SpinKitFadingCircle(
+            itemBuilder: (_, int index) {
+              return DecoratedBox(
+                decoration: BoxDecoration(
+                  color: index.isEven ? Colors.red : Colors.green,
+                ),
+              );
+            },
+          ))
         : Container(
             child: Query(allUser, variables: {
             'id': widget.id,
@@ -93,7 +100,15 @@ class _PersonalChatState extends State<PersonalChat> {
           }) {
             print(widget.id);
             if (loading) {
-              return Text("Loading...");
+              return Center(child: SpinKitFadingCircle(
+                itemBuilder: (_, int index) {
+                  return DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: index.isEven ? Colors.red : Colors.green,
+                    ),
+                  );
+                },
+              ));
             }
             if (error != null) {
               return Text("Some error fetching data");

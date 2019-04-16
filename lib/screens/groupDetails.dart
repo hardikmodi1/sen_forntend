@@ -59,7 +59,7 @@ class _GroupDetailState extends State<GroupDetail> {
                             ),
                             title: Text("Camera"),
                             onTap: () {
-                              upload.upload(name).then((onValue) {
+                              upload.upload(name, 0).then((onValue) {
                                 if (onValue != null) {
                                   setState(() {
                                     url = onValue;
@@ -81,7 +81,18 @@ class _GroupDetailState extends State<GroupDetail> {
                           ),
                           title: Text("Gallery"),
                           onTap: () {
-                            upload.upload(name).then((onValue) {
+                            upload.upload(name, 1).then((onValue) {
+                              if (onValue != null) {
+                                setState(() {
+                                  url = onValue;
+                                });
+                                print("gdfdfdfdfds" + url);
+                                print(widget.groupId);
+                                updateDescription({
+                                  'groupId': widget.groupId,
+                                  'imageLink': url
+                                });
+                              }
                               print(onValue);
                             });
                           },

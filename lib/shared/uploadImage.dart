@@ -3,9 +3,13 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
-Future<String> upload(String name) async {
+Future<String> upload(String name, int gallery) async {
   print("pressed");
-  File img = await ImagePicker.pickImage(source: ImageSource.gallery);
+  File img;
+  if (gallery == 1)
+    img = await ImagePicker.pickImage(source: ImageSource.gallery);
+  else
+    img = await ImagePicker.pickImage(source: ImageSource.camera);
   if (img != null) {
     StorageReference ref = FirebaseStorage.instance
         .ref()

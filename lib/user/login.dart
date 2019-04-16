@@ -41,6 +41,7 @@ class _LoginState extends State<Login> {
 
     final email = TextField(
       controller: _emailController,
+      key: Key("email"),
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
       decoration: InputDecoration(
@@ -58,6 +59,7 @@ class _LoginState extends State<Login> {
 
     final password = TextField(
       controller: _passwordController,
+      key: Key("password"),
       autofocus: false,
       obscureText: true,
       decoration: InputDecoration(
@@ -115,70 +117,66 @@ class _LoginState extends State<Login> {
           .pushAndRemoveUntil(route, (Route<dynamic> route) => false);
     }
 
-    return Container(
-      child: Scaffold(
-        resizeToAvoidBottomPadding: false,
-        backgroundColor: Colors.white,
-        body: Center(
-          child: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            children: <Widget>[
-              logo,
-              SizedBox(height: 48.0),
-              email,
-              SizedBox(height: 8.0),
-              password,
-              SizedBox(height: 24.0),
-              Mutation(
-                mutations.login,
-                builder: (
-                  login, {
-                  bool loading,
-                  Map data,
-                  Exception error,
-                }) {
-                  return RaisedButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      onPressed: () {
-                        if (_emailController.text.isNotEmpty &&
-                            _passwordController.text.isNotEmpty) {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              });
-                          login({
-                            'email': _emailController.text,
-                            'password': _passwordController.text
-                          });
-                        } else {
-                          setState(() {
-                            _emailValidate =
-                                _emailController.text.isEmpty ? blankError : "";
-                            _passValidate = _passwordController.text.isEmpty
-                                ? blankError
-                                : "";
-                          });
-                        }
-                        print(error);
-                      },
-                      child: Text('Login'));
-                },
-                onCompleted: (Map<String, dynamic> data) {
-                  Navigator.of(context).pop();
-                  data['login'][0]['id'] != null
-                      ? success(data)
-                      : setError(data);
-                },
-              ),
-              forgotLabel
-            ],
-          ),
+    return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.white,
+      body: Center(
+        child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.only(left: 24.0, right: 24.0),
+          children: <Widget>[
+            logo,
+            SizedBox(height: 48.0),
+            email,
+            SizedBox(height: 8.0),
+            password,
+            SizedBox(height: 24.0),
+            Mutation(
+              mutations.login,
+              builder: (
+                login, {
+                bool loading,
+                Map data,
+                Exception error,
+              }) {
+                return RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    onPressed: () {
+                      if (_emailController.text.isNotEmpty &&
+                          _passwordController.text.isNotEmpty) {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            });
+                        login({
+                          'email': _emailController.text,
+                          'password': _passwordController.text
+                        });
+                      } else {
+                        setState(() {
+                          _emailValidate =
+                              _emailController.text.isEmpty ? blankError : "";
+                          _passValidate = _passwordController.text.isEmpty
+                              ? blankError
+                              : "";
+                        });
+                      }
+                      print(error);
+                    },
+                    child: Text('Login'));
+              },
+              onCompleted: (Map<String, dynamic> data) {
+                Navigator.of(context).pop();
+                data['login'][0]['id'] != null ? success(data) : setError(data);
+              },
+            ),
+            forgotLabel
+          ],
         ),
       ),
     );
